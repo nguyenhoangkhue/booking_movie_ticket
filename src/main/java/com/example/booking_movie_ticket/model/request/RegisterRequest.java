@@ -1,24 +1,25 @@
 package com.example.booking_movie_ticket.model.request;
-import jakarta.persistence.Column;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.validator.constraints.Length;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class SignupRequest {
-    @NotEmpty(message = "Tên người dùng không được để trống")
+public class RegisterRequest {
+    @NotEmpty(message = "Tên không được để trống")
     String name;
-    @Column(unique = true,nullable = false)
-    @Email(message="Email không đúng định dạng")
+
+    @NotEmpty(message = "Email không được để trống")
+    @Email(message = "Email không đúng định dạng")
     String email;
+
     @NotEmpty(message = "Mật khẩu không được để trống")
-    @Length(min=3,message="Mật khẩu phải có ít nhất 3 kí tự")
+    @Length(min = 3, message = "Mật khẩu phải có ít nhất 3 ký tự")
     String password;
 }

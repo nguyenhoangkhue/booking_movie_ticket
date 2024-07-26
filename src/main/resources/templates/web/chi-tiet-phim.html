@@ -1,5 +1,6 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -17,8 +18,9 @@
 </head>
 </head>
 <body>
+<div class="box"></div>
 <header>
-    <nav class="navbar navbar-expand-lg bg-dark">
+    <nav class="navbar navbar-expand-lg bg-transparent">
         <div class="container">
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -26,9 +28,12 @@
             <a class="navbar-brand" href="#">
                 <img src="/web-assets/images/logo.png" alt="logo" class="logo">
             </a>
-            <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+            <div class="collapse navbar-collapse d-flex justify-content-space-between" id="navbarTogglerDemo03">
                 <div class="navbar-nav">
-                    <a class="nav-link text-white" href="/static">Trang chủ</a>
+                    <a class="nav-link text-white" href="/">Trang chủ</a>
+                    <a class="nav-link text-white" href="/lich-chieu">Lịch chiếu</a>
+                    <a class="nav-link text-white" href="#">Khuyễn mãi</a>
+                    <a class="nav-link text-white" href="/gia-ve">Giá vé</a>
                     <a class="nav-link text-white" href="#">Quốc gia</a>
                     <a class="nav-link text-white" href="#">Thể loại</a>
                 </div>
@@ -36,30 +41,29 @@
                     <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
                     <button class="btn btn-outline-success" type="submit">Search</button>
                 </form>
-                <div>
-                    <a class="text-white" th:if="${session.currentUser==null}" href="/login">Đăng nhập</a>
-                    <div class="dropdown" th:if="${session.currentUser!=null}">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                                aria-expanded="false" th:text="${session.currentUser.name}">
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li th:if="${session.currentUser.role.toString() == 'ADMIN'}">
-                                <a class="dropdown-item" href="/admin">Trang quản trị</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="/thong-tin-ca-nhan">Thông tin cá nhân</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="/phim-yeu-thich">Phim yêu thích</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="/lich-su-xem-phim">Lịch sử xem phim</a>
-                            </li>
-                            <li>
-                                <span class="dropdown-item" style="cursor: pointer">Đăng xuất</span>
-                            </li>
-                        </ul>
-                    </div>
+            </div>
+            <div>
+                <a class="text-white" sec:authorize="!isAuthenticated()" href="/signin">Đăng nhập</a>
+                <div class="dropdown" sec:authorize="isAuthenticated()">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                            aria-expanded="false" sec:authentication="name">
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li sec:authorize="hasRole('ADMIN')">
+                            <a class="dropdown-item" href="/admin">Trang quản trị</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/thong-tin-ca-nhan">Thông tin cá nhân</a>
+                        </li>
+                        <li>
+                        <li>
+                        <span class="dropdown-item" style="cursor: pointer" >
+                            <form th:action="@{/logout}" method="post">
+                                <button type="submit">Đăng xuất</button>
+                            </form>
+                        </span>
+                    </li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -74,8 +78,8 @@
                 </div>
             </div>
             <div class="col-9">
-                <h4 class="mb-2" th:text="${movie.name}">moi lien ket bi an</h4>
-                <div class="bg-body-tertiary p-4">
+                <h4 class="mb-2 text-white" th:text="${movie.name}">moi lien ket bi an</h4>
+                <div class="p-4 text-white">
                     <p>The loai:
                         <th:block th:each="genre,iterStat:${movie.genres}">
                             <span th:text="${genre.name}"></span>
@@ -95,12 +99,18 @@
                             <span th:if="${!iterStat.last}">-</span>
                         </th:block></p>
                     <p>Mo ta: <th:block th:text="${movie.description}"></th:block></p>
+                    <th:block>
+                        <a class="btn btn-danger px-5"
+                           th:href="@{/xem-trailer/{id}/{trailer-url} (id=${movie.id}, slug=${movie.trailerURL})}">
+                            Xem trailer</a>
+                    </th:block>
+                    <th:block><a class="btn btn-warning px-5"  th:href="@{/dat-ve}"> Đặt vé </a> </th:block>
                 </div>
             </div>
         </div>
     </div>
 </section>
-<section class="py-4 bg-body-tertiary p-4">
+<section class="py-4 bg-body-dark p-4">
     <div class="container">
         <div class="d-flex justify-content-between align-items-canter">
             <h3 class="text-uppercase mb-3">Phim liên quan</h3>
@@ -109,7 +119,7 @@
         <div class="row">
             <div class="col-2" th:each="movie : ${relateMovies}">
                 <a th:href="@{/phim/{id}/{slug} (id=${movie.id}, slug=${movie.slug})}"
-                   class="text-decoration-none text-dark">
+                   class="text-decoration-none text-white">
                     <div class="movie-item">
                         <div class="movie-poster rounded overflow-hidden">
                             <img th:src="${movie.poster}" th:alt="${movie.name}">
@@ -129,7 +139,7 @@
                 Viết bình luận
             </button>
         </div>
-        <p>Vui lòng <a href="/dang-nhap" class="text-decoration-underline">đăng nhập</a> để viết bình luận.</p>
+        <p sec:authorize="!isAuthenticated()">Vui lòng <a href="/dang-nhap" class="text-decoration-underline">đăng nhập</a> để viết bình luận.</p>
 
         <div class="review-list">
             <div class="review-item d-flex mb-4" th:each="review : ${listReviews}">
@@ -148,11 +158,7 @@
                         <th:block th:text="${review.rating}"></th:block>
                         <span class="text-warning"><i class="fa fa-star"></i></span>
                     </p>
-                    <p class="mb-0" th:text="${review.content}">Lorem ipsum dolor sit amet, consectetur adipisicing
-                        elit. Nulla porro impedit
-                        molestias labore esse fugit corporis quisquam alias dolor natus, et est reiciendis quam modi.
-                        Maxime quis a omnis nemo ea aperiam, corrupti vitae id maiores nisi asperiores tempore quas
-                        reiciendis optio impedit quasi ad laudantium nobis eum mollitia animi!</p>
+                    <p class="mb-0" th:text="${review.content}"></p>
                     <div>
                         <button
                                 th:onclick="|openModalReviewUpdate(${review.id})|"
@@ -215,7 +221,7 @@
     </div>
 </div>
 
-<footer class="bg-dark py-4">
+<footer class="bg-black py-4">
     <div class="container">
         <div class="row">
             <div class="col-4">

@@ -1,7 +1,7 @@
 package com.example.booking_movie_ticket.rest;
 
 import com.example.booking_movie_ticket.model.request.LoginRequest;
-import com.example.booking_movie_ticket.model.request.SignupRequest;
+import com.example.booking_movie_ticket.model.request.RegisterRequest;
 import com.example.booking_movie_ticket.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,9 +21,9 @@ public class AuthApi {
         authService.login(request);
         return ResponseEntity.ok().build();
     }
-    @PostMapping("/signup")
-    public ResponseEntity<?> signup(@Valid @RequestBody SignupRequest request){
-        authService.signup(request);
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
+        authService.register(request);
         return ResponseEntity.ok().build();
     }
 }

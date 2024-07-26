@@ -87,10 +87,10 @@ const renderReviews = (reviews) => {
     paginatedReviews.forEach((review) => {
         html += `
             <div class="review-item d-flex mb-4">
-                <div class="review-avatar">
+                <div class="review-avatar text-white">
                     <img src=${review.user.avatar} alt=${review.user.name}>
                 </div>
-                <div class="review-info ps-3">
+                <div class="review-info ps-3 text-white">
                     <p class="mb-0">
                         <span class="fw-bold">${review.user.name}</span>
                         <span class="fst-italic text-muted">
@@ -145,6 +145,10 @@ const createReview = () => {
         .then(response => {
             console.log(response.data);
             toastr.success("Tạo mới đánh giá thành công!");
+            reviews.unshift(response.data)
+            renderReviews(reviews);
+
+            modalReviewInstance.hide();
         })
         .catch(error => {
             console.error('Có lỗi xảy ra:', error);

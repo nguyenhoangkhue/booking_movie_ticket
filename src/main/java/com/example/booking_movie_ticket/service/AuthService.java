@@ -6,7 +6,7 @@ import com.example.booking_movie_ticket.exception.BadRequestException;
 import com.example.booking_movie_ticket.model.enums.Role;
 import com.example.booking_movie_ticket.model.enums.TokenType;
 import com.example.booking_movie_ticket.model.request.LoginRequest;
-import com.example.booking_movie_ticket.model.request.SignupRequest;
+import com.example.booking_movie_ticket.model.request.RegisterRequest;
 import com.example.booking_movie_ticket.model.response.VerifyResponse;
 import com.example.booking_movie_ticket.repository.TokenConfirmRepository;
 import com.example.booking_movie_ticket.repository.UserRepository;
@@ -45,18 +45,18 @@ public class AuthService {
             //luu doi tuong da xac thuc vao trong securitycontextholder
             SecurityContextHolder.getContext().setAuthentication(authentication);
             //luu vao trong session
-            session.setAttribute("currentUser",authentication.getName());
+            session.setAttribute("MY_SESSION",authentication.getName());
         } catch (DisabledException e){
             throw new BadRequestException("Tài khoản của bạn chưa được kích hoạt vui lòng kiểm tra email");
         } catch (AuthenticationException e){
             throw new BadRequestException("Tài khoản hoặc mật khẩu không đúng");
         }
     }
-    public void signup(SignupRequest request) {
-        Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
-        if (userOptional.isPresent()) {
+    public void register(RegisterRequest request) {
+        if (userRepository.existsByEmail(request.getEmail())) {
             throw new BadRequestException("Email already exist");
         }
+
         User user = User.builder()
                 .name(request.getName())
                 .email(request.getEmail())
@@ -66,7 +66,7 @@ public class AuthService {
                 .build();
         userRepository.save(user);
 
-        TokenConfirm tokenConfirm=TokenConfirm.builder()
+        TokenConfirm tokenConfirm = TokenConfirm.builder()
                 .token(UUID.randomUUID().toString())
                 .type(TokenType.CONFIRM_REGISTRATION)
                 .createdAt(LocalDateTime.now())
@@ -75,8 +75,9 @@ public class AuthService {
                 .build();
         tokenConfirmRepository.save(tokenConfirm);
 
-        String link="http://localhost:8090/xac-thuc-tai-khoan?token="+tokenConfirm.getToken();
-        mailService.sendMail(user.getEmail(),"Xác thực tài khoản",link);
+        String link = "http://localhost:8099/xac-thuc-tai-khoan?token=" + tokenConfirm.getToken();
+//        mailService.sendMail(user.getEmail(), "Xác thực tài khoản", link);
+        mailService.sendMail2(user, "Xác thực tài khoản", link);
     }
     public VerifyResponse verifyAccount(String token){
         Optional<TokenConfirm> optionalTokenConfirm=tokenConfirmRepository

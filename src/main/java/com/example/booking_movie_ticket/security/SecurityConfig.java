@@ -53,15 +53,6 @@ public class SecurityConfig {
 //            auth.anyRequest().authenticated();
             auth.anyRequest().permitAll();
         });
-        //cau hinh form login
-//        http.formLogin(form->{
-//            form.loginPage("/login");
-//            form.loginProcessingUrl("/login-process");
-//            form.usernameParameter("email");
-//            form.passwordParameter("pass");
-//            form.defaultSuccessUrl("/",true);
-//            form.permitAll();
-//        });
         //cau hinh form logout
         http.logout(logout->{
             logout.logoutSuccessUrl("/");

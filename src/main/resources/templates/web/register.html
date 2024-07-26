@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Đăng nhập</title>
+  <title>Đăng ký</title>
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"
         integrity="sha512-vKMx8UnXk60zUwyUnUPM3HbQo8QfmNx7+ltw8Pm5zLusl1XIfwcxo8DbWCqMGKaWeNxWA8yrx5v3SaVpMvR3CA=="
@@ -11,7 +11,7 @@
   <link rel="stylesheet" th:href="@{/web-assets/css/signin.css}">
 </head>
 <body>
-<form id="form-login">
+<form id="form-signup">
   <div class="svgContainer">
     <div>
       <svg class="mySVG" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 200 200">
@@ -115,13 +115,16 @@
     </div>
   </div>
 
+  <div class="inputGroup inputGroup4">
+    <label for="name" id="loginNameLabel">Name</label>
+    <input type="text" id="name" maxlength="254" />
+  </div>
   <div class="inputGroup inputGroup1">
     <label for="email" id="loginEmailLabel">Email</label>
     <input type="text" id="email" maxlength="254" />
-
   </div>
   <div class="inputGroup inputGroup2">
-    <label for="password" id="loginPasswordLabel">Password</label>
+    <label for="password" id="signinConfirmPasswordLabel">Password</label>
     <input type="password" id="password" />
     <label id="showPasswordToggle" for="showPasswordCheck">Show
       <input id="showPasswordCheck" type="checkbox" />
@@ -152,27 +155,36 @@
 <script src="/web-assets/js/common.js"></script>
 <script src="/web-assets/js/signup.js"></script>
 <script>
-  const formLoginEl = document.getElementById('form-login');
+  const formSignupEl = document.getElementById('form-signup');
+  const nameEl = document.getElementById('name');
   const emailEl = document.getElementById('email');
   const passwordEl = document.getElementById('password');
-  formLoginEl.addEventListener('submit', async function (e) {
+  const confirmPasswordEl = document.getElementById('confirmPassword');
+  formSignupEl.addEventListener('submit', async function (e) {
     e.preventDefault();
     const email = emailEl.value;
     const password = passwordEl.value;
+    const name = nameEl.value;
+    const confirmPassword = confirmPasswordEl.value;
     const data = {
+      name,
       email,
-      password
+      password,
+      confirmPassword
     };
-    try {
-      const response = await axios.post('/api/auth/login', data);
-      if (response.status === 200) {
-        toastr.success('Đăng nhập thành công');
-        setTimeout(() => {
-          window.location.href = '/';
-        }, 1000);
+
+    if (password===confirmPassword){
+      try {
+        const response = await axios.post('/api/auth/register', data);
+        if (response.status === 200) {
+          toastr('Vui lòng vào email để xác nhận tài khoản');
+          setTimeout(() => {
+            window.location.href = '/signin';
+          }, 1000);
+        }
+      } catch (error) {
+        toastr.error(error.response.data.message);
       }
-    } catch (error) {
-      toastr.error(error.response.data.message);
     }
   });
 </script>

@@ -1,8 +1,10 @@
-var emailLabel = document.querySelector("#loginEmailLabel"),
+let emailLabel = document.querySelector("#loginEmailLabel"),
     email = document.querySelector("#email"),
+    nameLable = document.querySelector("#loginNameLabel"),
+    name = document.querySelector("#name"),
     passwordLabel = document.querySelector("#loginPasswordLabel"),
     password = document.querySelector("#password"),
-    passwordLabel1 = document.querySelector("#loginPasswordLabel1"),
+    confirmPasswordLabel = document.querySelector("#signinConfirmPasswordLabel"),
     confirmPassword = document.querySelector("#confirmPassword"),
     showPasswordCheck = document.querySelector("#showPasswordCheck"),
     showPasswordToggle = document.querySelector("#showPasswordToggle"),
@@ -32,11 +34,13 @@ var emailLabel = document.querySelector("#loginEmailLabel"),
     hair = document.querySelector(".hair"),
     bodyBG = document.querySelector(".bodyBGnormal"),
     bodyBGchanged = document.querySelector(".bodyBGchanged");
-var activeElement,
+let activeElement,
     curEmailIndex,
+    curNameIndex,
     screenCenter,
     svgCoords,
     emailCoords,
+    nameCoords,
     emailScrollMax,
     chinMin = 0.5,
     dFromC,
@@ -45,7 +49,7 @@ var activeElement,
     eyeScale = 1,
     eyesCovered = false,
     showPasswordClicked = false;
-var eyeLCoords,
+let eyeLCoords,
     eyeRCoords,
     noseCoords,
     mouthCoords,
@@ -231,6 +235,163 @@ function calculateFaceMove(e) {
 
     document.body.removeChild(div);
 }
+function calculateFaceMove1(e) {
+    var carPos = name.selectionEnd,
+        div = document.createElement("div"),
+        span = document.createElement("span"),
+        copyStyle = getComputedStyle(name),
+        caretCoords = {};
+    if (carPos == null || carPos == 0) {
+        // if browser doesn't support 'selectionEnd' property on input[type="text"], use 'value.length' property instead
+        carPos = name.value.length;
+    }
+    [].forEach.call(copyStyle, function (prop) {
+        div.style[prop] = copyStyle[prop];
+    });
+    div.style.position = "absolute";
+    document.body.appendChild(div);
+    div.textContent = name.value.substr(0, carPos);
+    span.textContent = name.value.substr(carPos) || ".";
+    div.appendChild(span);
+
+    if (name.scrollWidth <= nameScrollMax) {
+        caretCoords = getPosition(span);
+        dFromC = screenCenter - (caretCoords.x + nameCoords.x);
+        eyeLAngle = getAngle(
+            eyeLCoords.x,
+            eyeLCoords.y,
+            nameCoords.x + caretCoords.x,
+            nameCoords.y + 25
+        );
+        eyeRAngle = getAngle(
+            eyeRCoords.x,
+            eyeRCoords.y,
+            nameCoords.x + caretCoords.x,
+            nameCoords.y + 25
+        );
+        noseAngle = getAngle(
+            noseCoords.x,
+            noseCoords.y,
+            nameCoords.x + caretCoords.x,
+            nameCoords.y + 25
+        );
+        mouthAngle = getAngle(
+            mouthCoords.x,
+            mouthCoords.y,
+            nameCoords.x + caretCoords.x,
+            nameCoords.y + 25
+        );
+    } else {
+        eyeLAngle = getAngle(
+            eyeLCoords.x,
+            eyeLCoords.y,
+            nameCoords.x + nameScrollMax,
+            nameCoords.y + 25
+        );
+        eyeRAngle = getAngle(
+            eyeRCoords.x,
+            eyeRCoords.y,
+            nameCoords.x + nameScrollMax,
+            nameCoords.y + 25
+        );
+        noseAngle = getAngle(
+            noseCoords.x,
+            noseCoords.y,
+            nameCoords.x + nameScrollMax,
+            nameCoords.y + 25
+        );
+        mouthAngle = getAngle(
+            mouthCoords.x,
+            mouthCoords.y,
+            nameCoords.x + nameScrollMax,
+            nameCoords.y + 25
+        );
+    }
+
+    eyeLX = Math.cos(eyeLAngle) * 20;
+    eyeLY = Math.sin(eyeLAngle) * 10;
+    eyeRX = Math.cos(eyeRAngle) * 20;
+    eyeRY = Math.sin(eyeRAngle) * 10;
+    noseX = Math.cos(noseAngle) * 23;
+    noseY = Math.sin(noseAngle) * 10;
+    mouthX = Math.cos(mouthAngle) * 23;
+    mouthY = Math.sin(mouthAngle) * 10;
+    mouthR = Math.cos(mouthAngle) * 6;
+    chinX = mouthX * 0.8;
+    chinY = mouthY * 0.5;
+    chinS = 1 - (dFromC * 0.15) / 100;
+    if (chinS > 1) {
+        chinS = 1 - (chinS - 1);
+        if (chinS < chinMin) {
+            chinS = chinMin;
+        }
+    }
+    faceX = mouthX * 0.3;
+    faceY = mouthY * 0.4;
+    faceSkew = Math.cos(mouthAngle) * 5;
+    eyebrowSkew = Math.cos(mouthAngle) * 25;
+    outerEarX = Math.cos(mouthAngle) * 4;
+    outerEarY = Math.cos(mouthAngle) * 5;
+    hairX = Math.cos(mouthAngle) * 6;
+    hairS = 1.2;
+
+    TweenMax.to(eyeL, 1, { x: -eyeLX, y: -eyeLY, ease: Expo.easeOut });
+    TweenMax.to(eyeR, 1, { x: -eyeRX, y: -eyeRY, ease: Expo.easeOut });
+    TweenMax.to(nose, 1, {
+        x: -noseX,
+        y: -noseY,
+        rotation: mouthR,
+        transformOrigin: "center center",
+        ease: Expo.easeOut
+    });
+    TweenMax.to(mouth, 1, {
+        x: -mouthX,
+        y: -mouthY,
+        rotation: mouthR,
+        transformOrigin: "center center",
+        ease: Expo.easeOut
+    });
+    TweenMax.to(chin, 1, {
+        x: -chinX,
+        y: -chinY,
+        scaleY: chinS,
+        ease: Expo.easeOut
+    });
+    TweenMax.to(face, 1, {
+        x: -faceX,
+        y: -faceY,
+        skewX: -faceSkew,
+        transformOrigin: "center top",
+        ease: Expo.easeOut
+    });
+    TweenMax.to(eyebrow, 1, {
+        x: -faceX,
+        y: -faceY,
+        skewX: -eyebrowSkew,
+        transformOrigin: "center top",
+        ease: Expo.easeOut
+    });
+    TweenMax.to(outerEarL, 1, {
+        x: outerEarX,
+        y: -outerEarY,
+        ease: Expo.easeOut
+    });
+    TweenMax.to(outerEarR, 1, { x: outerEarX, y: outerEarY, ease: Expo.easeOut });
+    TweenMax.to(earHairL, 1, {
+        x: -outerEarX,
+        y: -outerEarY,
+        ease: Expo.easeOut
+    });
+    TweenMax.to(earHairR, 1, { x: -outerEarX, y: outerEarY, ease: Expo.easeOut });
+    TweenMax.to(hair, 1, {
+        x: hairX,
+        scaleY: hairS,
+        transformOrigin: "center bottom",
+        ease: Expo.easeOut
+    });
+
+    document.body.removeChild(div);
+}
 
 function onEmailInput(e) {
     calculateFaceMove(e);
@@ -298,6 +459,72 @@ function onEmailInput(e) {
         eyeScale = 1;
     }
 }
+function onNameInput(e) {
+    calculateFaceMove1(e);
+    var value = name.value;
+    curNameIndex = value.length;
+
+    // very crude name validation to trigger effects
+    if (curNameIndex > 0) {
+        if (mouthStatus == "small") {
+            mouthStatus = "medium";
+            TweenMax.to([mouthBG, mouthOutline, mouthMaskPath], 1, {
+                morphSVG: mouthMediumBG,
+                shapeIndex: 8,
+                ease: Expo.easeOut
+            });
+            TweenMax.to(tooth, 1, { x: 0, y: 0, ease: Expo.easeOut });
+            TweenMax.to(tongue, 1, { x: 0, y: 1, ease: Expo.easeOut });
+            TweenMax.to([eyeL, eyeR], 1, {
+                scaleX: 0.85,
+                scaleY: 0.85,
+                ease: Expo.easeOut
+            });
+            eyeScale = 0.85;
+        }
+        if (value.includes("@")) {
+            mouthStatus = "large";
+            TweenMax.to([mouthBG, mouthOutline, mouthMaskPath], 1, {
+                morphSVG: mouthLargeBG,
+                ease: Expo.easeOut
+            });
+            TweenMax.to(tooth, 1, { x: 3, y: -2, ease: Expo.easeOut });
+            TweenMax.to(tongue, 1, { y: 2, ease: Expo.easeOut });
+            TweenMax.to([eyeL, eyeR], 1, {
+                scaleX: 0.65,
+                scaleY: 0.65,
+                ease: Expo.easeOut,
+                transformOrigin: "center center"
+            });
+            eyeScale = 0.65;
+        } else {
+            mouthStatus = "medium";
+            TweenMax.to([mouthBG, mouthOutline, mouthMaskPath], 1, {
+                morphSVG: mouthMediumBG,
+                ease: Expo.easeOut
+            });
+            TweenMax.to(tooth, 1, { x: 0, y: 0, ease: Expo.easeOut });
+            TweenMax.to(tongue, 1, { x: 0, y: 1, ease: Expo.easeOut });
+            TweenMax.to([eyeL, eyeR], 1, {
+                scaleX: 0.85,
+                scaleY: 0.85,
+                ease: Expo.easeOut
+            });
+            eyeScale = 0.85;
+        }
+    } else {
+        mouthStatus = "small";
+        TweenMax.to([mouthBG, mouthOutline, mouthMaskPath], 1, {
+            morphSVG: mouthSmallBG,
+            shapeIndex: 9,
+            ease: Expo.easeOut
+        });
+        TweenMax.to(tooth, 1, { x: 0, y: 0, ease: Expo.easeOut });
+        TweenMax.to(tongue, 1, { y: 0, ease: Expo.easeOut });
+        TweenMax.to([eyeL, eyeR], 1, { scaleX: 1, scaleY: 1, ease: Expo.easeOut });
+        eyeScale = 1;
+    }
+}
 
 function onEmailFocus(e) {
     activeElement = "email";
@@ -305,6 +532,13 @@ function onEmailFocus(e) {
     //stopBlinking();
     //calculateFaceMove();
     onEmailInput();
+}
+function onNameFocus(e) {
+    activeElement = "name";
+    e.target.parentElement.classList.add("focusWithText");
+    //stopBlinking();
+    //calculateFaceMove();
+    onNameInput();
 }
 
 function onEmailBlur(e) {
@@ -320,9 +554,25 @@ function onEmailBlur(e) {
         }
     }, 100);
 }
+function onNameBlur(e) {
+    activeElement = null;
+    setTimeout(function () {
+        if (activeElement == "name") {
+        } else {
+            if (e.target.value == "") {
+                e.target.parentElement.classList.remove("focusWithText");
+            }
+            //startBlinking();
+            resetFace();
+        }
+    }, 100);
+}
 
 function onEmailLabelClick(e) {
     activeElement = "email";
+}
+function onNameLabelClick(e) {
+    activeElement = "name";
 }
 
 function onPasswordFocus(e) {
@@ -554,6 +804,7 @@ function initLoginForm() {
     // some measurements for the svg's elements
     svgCoords = getPosition(mySVG);
     emailCoords = getPosition(email);
+    nameCoords = getPosition(name);
     screenCenter = svgCoords.x + mySVG.offsetWidth / 2;
     eyeLCoords = { x: svgCoords.x + 84, y: svgCoords.y + 76 };
     eyeRCoords = { x: svgCoords.x + 113, y: svgCoords.y + 76 };
@@ -565,6 +816,11 @@ function initLoginForm() {
     email.addEventListener("blur", onEmailBlur);
     email.addEventListener("input", onEmailInput);
     emailLabel.addEventListener("click", onEmailLabelClick);
+
+    name.addEventListener("focus", onNameFocus);
+    name.addEventListener("blur", onNameBlur);
+    name.addEventListener("input", onNameInput);
+    nameLable.addEventListener("click", onNameLabelClick);
 
     // handle events for password input
     password.addEventListener("focus", onPasswordFocus);
@@ -604,6 +860,7 @@ function initLoginForm() {
     // determine how far email input can go before scrolling occurs
     // will be used as the furthest point avatar will look to the right
     emailScrollMax = email.scrollWidth;
+    nameScrollMax = name.scrollWidth;
 
     // check if we're on mobile/tablet, if so then show password initially
     if (isMobileDevice()) {

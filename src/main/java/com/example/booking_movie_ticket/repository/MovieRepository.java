@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MovieRepository extends JpaRepository<Movie, Integer> {
-    List<Movie> findTop10ByStatusOrderByRatingDesc(Boolean status);
+    List<Movie> findTop6ByStatusOrderByRatingDesc(Boolean status);
 
-    List<Movie> findTop6ByGenresAndStatusAndIdNotOrderByRatingDesc(List<Genre> genre,Boolean status,Integer id);
+    List<Movie> findTop6ByGenres_IdInAndStatusAndIdNotOrderByRatingDesc(List<Integer> genreIds,Boolean status,Integer id);
 
     Optional<Movie> findByStatusAndIdAndSlug(Boolean status,Integer id,String slug);
 }
