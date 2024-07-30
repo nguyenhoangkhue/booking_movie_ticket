@@ -4,33 +4,33 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
 import java.util.Date;
 
-@Entity
-@Table(name = "halls")
-@Getter
-@Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-@Builder
+@Getter
+@Setter
+@Entity
+@Table(name = "showtimes")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Hall {
+public class ShowTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
 
-    @Column(nullable = false)
-    String name;
+    @ManyToOne
+    @JoinColumn(name = "movie_id")
+    Movie movie;
 
-    Integer totalRows;
-    Integer totalCols;
+    @ManyToOne
+    @JoinColumn(name = "hall_id")
+    Hall hall;
 
-    public Integer getTotalSeats() {
-        return totalRows * totalCols;
-    }
-
-    Integer capacity;
+    LocalDate date;
+    String startTime;
+    String endTime;
     Date createdAt;
     Date updatedAt;
 }

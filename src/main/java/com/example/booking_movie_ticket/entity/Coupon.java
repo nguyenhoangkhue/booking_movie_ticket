@@ -6,31 +6,34 @@ import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
 
-@Entity
-@Table(name = "halls")
-@Getter
-@Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-@Builder
+@Getter
+@Setter
+@Entity
+@Table(name = "coupons")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Hall {
+public class Coupon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
 
-    @Column(nullable = false)
-    String name;
+    String code;
+    Integer discount;
+    Integer quantity;
+    Integer used;
+    Boolean status;
 
-    Integer totalRows;
-    Integer totalCols;
+    @Column(name = "start_date")
+    Date startDate;
 
-    public Integer getTotalSeats() {
-        return totalRows * totalCols;
-    }
+    @Column(name = "end_date")
+    Date endDate;
 
-    Integer capacity;
+    @Column(name = "created_at")
     Date createdAt;
+
+    @Column(name = "updated_at")
     Date updatedAt;
 }

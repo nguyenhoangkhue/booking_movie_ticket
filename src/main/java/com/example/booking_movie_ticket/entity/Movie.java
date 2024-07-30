@@ -1,5 +1,6 @@
 package com.example.booking_movie_ticket.entity;
 
+import com.example.booking_movie_ticket.model.enums.MovieAge;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -30,11 +31,13 @@ public class Movie {
     @Column(columnDefinition = "TEXT")
     String description;
 
+    @Enumerated(EnumType.STRING)
+    MovieAge age;
     String poster;
     Integer releaseYear;
     Double rating;
     String trailerURL;
-
+    Integer duration;
     Boolean status;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;

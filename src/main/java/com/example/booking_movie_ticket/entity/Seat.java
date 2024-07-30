@@ -4,6 +4,9 @@ import com.example.booking_movie_ticket.model.enums.SeatType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.util.Date;
+
 @Entity
 @Table(name = "seats")
 @Getter
@@ -22,9 +25,14 @@ public class Seat {
     SeatType seatType;
 
     Boolean status;
+    Integer rowIndex;
+    Integer colIndex;
     String seatPosition;
 
     @ManyToOne
     @JoinColumn(name="hall_id")
     Hall hall;
+
+    Date createdAt;
+    Date updatedAt;
 }

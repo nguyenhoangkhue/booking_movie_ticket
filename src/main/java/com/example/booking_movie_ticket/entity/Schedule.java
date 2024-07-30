@@ -6,31 +6,23 @@ import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
 
-@Entity
-@Table(name = "halls")
-@Getter
-@Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-@Builder
+@Getter
+@Setter
+@Entity
+@Table(name = "schedules")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Hall {
+public class Schedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
 
-    @Column(nullable = false)
-    String name;
+    @ManyToOne
+    @JoinColumn(name = "movie_id")
+    Movie movie;
 
-    Integer totalRows;
-    Integer totalCols;
-
-    public Integer getTotalSeats() {
-        return totalRows * totalCols;
-    }
-
-    Integer capacity;
-    Date createdAt;
-    Date updatedAt;
+    Date startDate;
+    Date endDate;
 }
