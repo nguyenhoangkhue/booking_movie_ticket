@@ -39,7 +39,7 @@ public class MailService {
             context.setVariable("user", user);
             context.setVariable("link", link);
 
-            final String htmlContent = templateEngine.process("mail-template/confirm-registration", context);
+            final String htmlContent = templateEngine.process("email-template/confirm-registration", context);
             message.setContent(htmlContent, "text/html");
 
             // Send Message!

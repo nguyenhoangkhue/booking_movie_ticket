@@ -13,4 +13,7 @@ public interface MovieRepository extends JpaRepository<Movie, Integer> {
     List<Movie> findTop6ByGenres_IdInAndStatusAndIdNotOrderByRatingDesc(List<Integer> genreIds,Boolean status,Integer id);
 
     Optional<Movie> findByStatusAndIdAndSlug(Boolean status,Integer id,String slug);
+
+    Optional<Movie> findMovieById(Integer id);
+    List<Movie> findTop6ByCountry_IdAndStatus(Integer id,Boolean status);
 }

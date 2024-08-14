@@ -20,7 +20,7 @@
 <body>
 <div class="box"></div>
 <header>
-    <nav class="navbar navbar-expand-lg bg-dark">
+    <nav class="navbar navbar-expand-lg bg-transparent">
         <div class="container">
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -28,19 +28,45 @@
             <a class="navbar-brand" href="#">
                 <img src="/web-assets/images/logo.png" alt="logo" class="logo">
             </a>
-            <div class="collapse navbar-collapse d-flex justify-content-space-between" id="navbarTogglerDemo03">
-                <div class="navbar-nav">
-                    <a class="nav-link text-white" href="/">Trang chủ</a>
-                    <a class="nav-link text-white" href="/lich-chieu">Lịch chiếu</a>
-                    <a class="nav-link text-white" href="#">Khuyễn mãi</a>
-                    <a class="nav-link text-white" href="/gia-ve">Giá vé</a>
-                    <a class="nav-link text-white" href="#">Quốc gia</a>
-                    <a class="nav-link text-white" href="#">Thể loại</a>
+            <div class="row">
+                <div class="col-12">
+                    <div class="collapse navbar-collapse d-flex justify-content-space-between" id="navbarTogglerDemo03">
+                        <div class="navbar-nav">
+                            <a class="nav-link text-white" href="/">Trang chủ</a>
+                            <a class="nav-link text-white" href="/lich-chieu">Lịch chiếu</a>
+                            <a class="nav-link text-white" href="#">Khuyễn mãi</a>
+                            <a class="nav-link text-white" href="/gia-ve">Giá vé</a>
+                            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle  text-white" href="#" role="button"
+                                           data-bs-toggle="dropdown" aria-expanded="false">
+                                            Thể loại
+                                        </a>
+                                        <ul class="dropdown-menu dropdown-menu-dark ">
+                                            <li th:each="genre : ${genres}">
+                                                <a class="dropdown-item" th:href="@{/movies/{slug}(slug=${genre.slug})}"
+                                                   th:text="${genre.name}">Ds thể loại</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle  text-white" href="#" role="button"
+                                           data-bs-toggle="dropdown" aria-expanded="false">
+                                            Quoc gia
+                                        </a>
+                                        <ul class="dropdown-menu dropdown-menu-dark ">
+                                            <li th:each="country : ${countries}">
+                                                <a class="dropdown-item" th:href="@{/movies/{slug}(slug=${country.slug})}"
+                                                   th:text="${country.name}">Ds thể loại</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <form class="d-flex" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success" type="submit">Search</button>
-                </form>
             </div>
             <div>
                 <a class="text-white" sec:authorize="!isAuthenticated()" href="/signin">Đăng nhập</a>
@@ -50,7 +76,7 @@
                     </button>
                     <ul class="dropdown-menu">
                         <li sec:authorize="hasRole('ADMIN')">
-                            <a class="dropdown-item" href="/admin">Trang quản trị</a>
+                            <a class="dropdown-item" href="/admin/movies">Trang quản trị</a>
                         </li>
                         <li>
                             <a class="dropdown-item" href="/thong-tin-ca-nhan">Thông tin cá nhân</a>
